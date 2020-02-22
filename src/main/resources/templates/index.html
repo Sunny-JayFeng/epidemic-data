@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>(模仿腾讯)国内疫情数据</title>
+    <link rel="stylesheet" th:href="@{../css/bootstrap.css}">
+    <link rel="stylesheet" th:href="@{../css/index.css}">
+    <script type="text/javascript" src="js/echarts.min.js"></script>
+    <script type="text/javascript" src="js/china.js"></script>
+    <script type="text/javascript" src="js/jquery-2.2.4.js"></script>
+</head>
+<body>
+    <div class="wrapper">
+        <!-- 顶部，整体数据部分 -->
+        <div class="top">
+            <div class="head">
+                <img src="https://mat1.gtimg.com/news/images/inews/2020/feiyan/18/img/top_headv3.png" alt="模仿腾讯疫情实时页面">
+                <p class="data-from">数据来源：国家及各地卫健委每日信息发布</p>
+            </div>
+            <div class="china-today-total">
+                <div class="time">
+                    统计截止
+                    <span th:text="${lastUpdateTime}">更新时间</span>
+                    更新于
+                    <span th:text="${timeBefore}">分钟</span>
+                    前
+                </div>
+                <div class="data" th:object="${chinaTotal}">
+                    <span th:object="${chinaAdd}">  <!-- 这个span标签，为了我更好的用thymeleaf而已。。。 -->
+                        <div class="icbar confirm">
+                            <div class="add">
+                                较上日
+                                <span th:text="${#numbers.formatInteger(chinaAdd.confirm, 1)}">增加</span>
+                            </div>
+                            <div class="number" th:text="${#numbers.formatInteger(chinaTotal.confirm, 1)}">confirm</div>
+                            <div class="text">累计确诊</div>
+                        </div>
+                        <div class="icbar heal">
+                            <div class="add">
+                                较上日
+                                <span th:text="${#numbers.formatInteger(chinaAdd.heal, 1)}">增加</span>
+                            </div>
+                            <div class="number" th:text="${#numbers.formatInteger(chinaTotal.heal, 1)}">heal</div>
+                            <div class="text">累计治愈</div>
+                        </div>
+                        <div class="icbar dead">
+                            <div class="add">
+                                较上日
+                                <span th:text="${#numbers.formatInteger(chinaAdd.dead, 1)}">增加</span>
+                            </div>
+                            <div class="number" th:text="${#numbers.formatInteger(chinaTotal.dead, 1)}">dead</div>
+                            <div class="text">累计死亡</div>
+                        </div>
+                        <div class="icbar nowConfirm">
+                            <div class="add">
+                                较上日
+                                <span th:text="${#numbers.formatInteger(chinaAdd.nowConfirm, 1)}">增加</span>
+                            </div>
+                            <div class="number" th:text="${#numbers.formatInteger(chinaTotal.nowConfirm, 1)}">nowConfirm</div>
+                            <div class="text">现有确诊</div>
+                        </div>
+                        <div class="icbar suspect">
+                            <div class="add">
+                                今日新增
+                                <span th:text="${#numbers.formatInteger(todayAddSuspect, 1)}">新增疑似</span>
+                            </div>
+                            <div class="number" th:text="${#numbers.formatInteger(chinaTotal.suspect, 1)}">suspect</div>
+                            <div class="text">现有疑似</div>
+                        </div>
+                        <div class="icbar nowSevere">
+                            <div class="add">
+                                较上日
+                                <span th:text="${#numbers.formatInteger(chinaAdd.nowSevere, 1)}">增加</span>
+                            </div>
+                            <div class="number" th:text="${#numbers.formatInteger(chinaTotal.nowSevere, 1)}">nowSevere</div>
+                            <div class="text">现有重症</div>
+                        </div>
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 数据图部分 -->
+        <div class="echarts">
+
+            <div class="map-chart-wrapper chart">
+                <div class="chinamapbtn">
+                    <span class="chinamapbtn1 current">累计确诊</span>
+                    <span class="chinamapbtn2">现有确诊</span>
+                </div>
+                <div class="map">
+                    <div class="map-chart confirm-map show-map"></div>
+                </div>
+            </div>
+
+            <div class="country-left left"></div>
+            <div class="country-chart chart">
+                <div class="country">
+                    <div class="country-one"></div>
+                    <div class="country-two"></div>
+                    <div class="country-three"></div>
+                    <div class="country-four"></div>
+                    <div class="title">
+                        <div class="title-one">全国疫情新增趋势</div>
+                        <div class="title-two">全国确证/疑似/重症趋势</div>
+                        <div class="title-three">全国累计治愈/死亡趋势</div>
+                        <div class="title-four">全国治愈率/病死率趋势</div>
+                    </div>
+                </div>
+                <span class="country-chart-index button">
+                    <span class="country-btn chart-one active">全国疫情<br/>新增趋势</span>
+                    <span class="country-btn chart-two">全国确诊<br/>疑似/重症</span>
+                    <span class="country-btn chart-three">全国累计<br/>治愈/死亡</span>
+                    <span class="country-btn chart-four">治愈率<br/>病死率</span>
+                </span>
+            </div>
+            <div class="country-right right"></div>
+
+            <div class="contrast-left left"></div>
+            <div class="contrast-chart chart">
+                <div class="contrast">
+                    <div class="contrast-one"></div>
+                    <div class="contrast-two"></div>
+                    <div class="contrast-three"></div>
+                    <div class="contrast-four"></div>
+                    <div class="title">
+                        <div class="title-one">全国/湖北/武汉确诊数对比</div>
+                        <div class="title-two">湖北内外新增确诊数对比</div>
+                        <div class="title-three">湖北内外病死率对比</div>
+                        <div class="title-four">湖北内外治愈率对比</div>
+                    </div>
+                </div>
+                <span class="contrast-chart-index button">
+                    <span class="contrast-btn chart-one active">全国累计<br/>趋势对比</span>
+                    <span class="contrast-btn chart-two">湖北内外<br/>新增确诊对比</span>
+                    <span class="contrast-btn chart-three">湖北内外<br/>病死率对比</span>
+                    <span class="contrast-btn chart-four">湖北内外<br/>治愈率对比</span>
+                </span>
+
+            </div>
+            <div class="contrast-right right"></div>
+        </div>
+
+        <!-- 全球数据部分 -->
+        <div class="all-data">
+            <!-- 国内数据部分 -->
+            <div class="china">
+                <div class="up-tips up-gnbl uchi">
+                    中国疫情（包括港澳台）
+                    <span class="tips">7:00-10:00为更新高峰，数据如有滞后请谅解。</span>
+                </div>
+                <div class="placeItem nav">
+                    <h2 class="blue">地区</h2>
+                    <div class="blue">新增确诊</div>
+                    <div>累计确诊</div>
+                    <div>治愈</div>
+                    <div>死亡</div>
+                    <div>疫情</div>
+                </div>
+                <div class="placeItemWrap" th:each="detailChinaData:${detailChinaDataList}">
+                    <div class="clearfix placeItem placeArea">
+                        <h2 class="blue" th:text="${detailChinaData.area}">provinceName</h2>
+                        <div class="add ac_add" th:text="${#numbers.formatInteger(detailChinaData.addConfirm, 1)}">addConfirm</div>
+                        <div class="confirm" th:text="${#numbers.formatInteger(detailChinaData.confirm, 1)}">confirm</div>
+                        <div class="heal" th:text="${#numbers.formatInteger(detailChinaData.heal, 1)}">heal</div>
+                        <div class="dead" th:text="${#numbers.formatInteger(detailChinaData.dead, 1)}">dead</div>
+                        <div class="detail">
+                            <a href="" target="_blank">详情</a>
+                        </div>
+                    </div>
+                    <div class="clearfix placeItem placeCity" th:each="cityDataList,cityDataListStat:${detailChinaData.cityList}">
+                        <h2  th:text="${cityDataList.name}">城市</h2>
+                        <div class="ac_add small" th:text="${#numbers.formatInteger(cityDataList.todayAddConfirm, 1)}">新增确诊</div>
+                        <div th:text="${#numbers.formatInteger(cityDataList.confirm, 1)}">累计确诊</div>
+                        <div th:text="${#numbers.formatInteger(cityDataList.heal, 1)}">治愈</div>
+                        <div th:text="${#numbers.formatInteger(cityDataList.dead, 1)}">死亡</div>
+                    </div>
+                </div>
+            </div>
+            <!-- 国外数据部分 -->
+            <div class="foreign">
+                <div class="up-tips up-gnbl">
+                    海外疫情
+                    <span class="datas">
+                        确诊
+                        <span class="hw_confirm" th:text="${#numbers.formatInteger(foreignConfirmSum, 1)}">confirm</span>
+                        例，死亡
+                        <span class="hw_dead" th:text="${#numbers.formatInteger(foreignDeadSum, 1)}">dead</span>
+                        例
+                    </span>
+                </div>
+                <div class="clearfix placeItem nav abroad">
+                    <h2>地区</h2>
+                    <div>确诊</div>
+                    <div>治愈</div>
+                    <div>死亡</div>
+                </div>
+                <div class="clearfix placeItem placeArea no-sharp abroad" th:each="countryData:${countryList}">
+                    <h2 class="blue" th:text="${countryData.name}">country</h2>
+                    <div th:text="${#numbers.formatInteger(countryData.confirm, 1)}">confirm</div>
+                    <div th:text="${#numbers.formatInteger(countryData.heal, 1)}">heal</div>
+                    <div th:text="${#numbers.formatInteger(countryData.dead, 1)}">dead</div>
+                </div>
+            </div>
+        </div>
+        
+
+    </div>
+
+    <script type="text/javascript" src="js/index.js"></script>
+
+    <script th:inline="javascript">
+        var dataList = [[${chinaConfirmList}]];
+        showMap(dataList);
+        mapBtnEvent();
+        function showMap(dataList) {
+            var confirmMapChart = echarts.init(document.getElementsByClassName('confirm-map')[0]);
+            confirmMapOption = {
+                tooltip: {
+                    trigger: 'item'
+                },
+                visualMap: {
+                    min: 1,
+                    max: 71682,
+                    show: true,
+                    left: 'left',
+                    bottom: '-15',
+                    type: 'piecewise',
+                    itemWidth: '10',
+                    itemHeight: '32',
+                    textStyle: {
+                        fontSize: 20,
+                        color: '#737373',
+                    },
+                    calculable: true,
+                    splitList: [
+                        {start: 10000, end: 99999, color: '#CC1E1E'},
+                        {start: 1000, end: 9999, color: '#F04141'},
+                        {start: 500, end: 999, color: '#FF704F'},
+                        {start: 100, end: 499, color: '#FFAA80'},
+                        {start: 10, end: 99, color: '#FFD0A6'},
+                        {start: 1, end: 9, color: '#FFEDD1'},
+                    ],
+                },
+                toolbox: {
+                    show: true,
+                    orient: 'vertical',
+                    left: 'right',
+                    top: 'center',
+                    feature: {
+                        mark: {show: true},
+                        dataView: {readOnly: false},
+                        restore: {},
+                        saveAsImage: {}
+                    }
+                },
+                series: [
+                    {
+                        name: '确诊数量',
+                        type: 'map',
+                        mapType: 'china',
+                        roam: false,
+                        zoom: 1.2,
+                        itemStyle: {
+                            normal: {
+                                label: {
+                                    show: true
+                                },
+                            },
+                            emphasis: {
+                                label: {
+                                    show: true,
+                                },
+                            },
+                        },
+                        data: dataList
+                    }
+                ]
+            };
+            confirmMapChart.setOption(confirmMapOption);
+        }
+        
+        function mapBtnEvent() {
+            var mapBtns = $('.chinamapbtn span');
+            for(var i = 0; i < mapBtns.length; i ++) {
+                $(mapBtns[i]).on('click', function() {
+                    var oldCurrent = $('.current').eq(0);
+                    var newCurrent = $(this);
+                    if(newCurrent.hasClass('chinamapbtn1')) {
+                        dataList = [[${chinaConfirmList}]];
+                    }else {
+                        dataList = [[${chinaNowConfirmList}]];
+                    }
+                    oldCurrent.removeClass('current');
+                    newCurrent.addClass('current');
+                    showMap(dataList);
+                });
+            }   
+        }
+    </script>
+
+    <script th:inline="javascript">
+        var countryChartOne = echarts.init(document.getElementsByClassName('country-one')[0]);
+        var countryChartTwo = echarts.init(document.getElementsByClassName('country-two')[0]);
+        var countryChartThree = echarts.init(document.getElementsByClassName('country-three')[0]);
+        var countryChartFour = echarts.init(document.getElementsByClassName('country-four')[0]);
+
+        var addConfirmList =[[${addConfirmList}]];
+        var addSuspectList = [[${addSuspectList}]];
+        var dateList1 = [[${dateListOne}]];
+        countryChartOneOption = {
+            legend: {
+                data: ['新增确诊', '新增疑似'],
+                top: '8%',
+                left: '10%',
+                icon: 'rect',
+                itemHeight: 20,
+                itemWidth: 20,
+                textStyle:{
+                    fontSize: 20,
+                    color: '#737373'
+                }
+            },
+            color: ['#f06061', '#ffd661'],
+            xAxis: {
+                data: dateList1
+            },
+            yAxis: {
+                type: 'value'
+            },
+            series: [{
+                name: '新增确诊',
+                data: addConfirmList,
+                type: 'line',
+                symbolSize: 8,
+                itemStyle: {
+                    normal: {
+                        lineStyle: {
+                            width: 5,
+                            color: '#f06061',
+                        }
+                    }
+                }
+            },{
+                name: '新增疑似',
+                data: addSuspectList,
+                type: 'line',
+                symbolSize: 8,
+                itemStyle: {
+                    normal: {
+                        lineStyle: {
+                            width: 5,
+                            color: '#ffd661',
+                        }
+                    }
+                }
+            }]
+        };
+
+        var dateList2 = [[${dateListTwo}]];
+        var confirmList = [[${confirmList}]];
+        var nowConfirmList = [[${nowConfirmList}]];
+        var suspectList = [[${suspectList}]];
+        var nowSevereList = [[${nowSevereList}]];
+        countryChartTwoOption = {
+            legend: {
+                data: ['累计确诊', '现有确诊', '现有疑似', '现有重症'],
+                top: '8%',
+                left: '10%',
+                icon: 'rect',
+                itemHeight: 20,
+                itemWidth: 20,
+                textStyle:{
+                    fontSize: 20,
+                    color: '#737373'
+                }
+            },
+            color: ['#9B0A0E', '#FF7B7C', '#FFD661', '#CD73BF'],
+            xAxis: {
+                data: dateList2
+            },
+            yAxis: {
+                type: 'value'
+            },
+            series: [{
+                name: '累计确诊',
+                data: confirmList,
+                type: 'line',
+                symbolSize: 8,
+                itemStyle: {
+                    normal: {
+                        lineStyle: {
+                            width: 5,
+                            color: '#9B0A0E'
+                        }
+                    }
+                }
+            },{
+                name: '现有确诊',
+                data: nowConfirmList,
+                type: 'line',
+                symbolSize: 8,
+                itemStyle: {
+                    normal: {
+                        lineStyle: {
+                            width: 5,
+                            color: '#FF7B7C'
+                        }
+                    }
+                }
+            },{
+                name: '现有疑似',
+                data: suspectList,
+                type: 'line',
+                symbolSize: 8,
+                itemStyle: {
+                    normal: {
+                        lineStyle: {
+                            width: 5,
+                            color: '#FFD661'
+                        }
+                    }
+                }
+            },{
+                name: '现有重症',
+                data: nowSevereList,
+                type: 'line',
+                symbolSize: 8,
+                itemStyle: {
+                    normal: {
+                        lineStyle: {
+                            width: 5,
+                            color: '#CD73BF'
+                        }
+                    }
+                }
+            }]
+        };
+
+        var healList = [[${healList}]];
+        var deadList = [[${deadList}]];
+        countryChartThreeOption = {
+            legend: {
+                data: ['累计治愈', '累计死亡'],
+                top: '8%',
+                left: '10%',
+                icon: 'rect',
+                itemHeight: 20,
+                itemWidth: 20,
+                textStyle:{
+                    fontSize: 20,
+                    color: '#737373'
+                }
+            },
+            color: ['#65b379', '#87878b'],
+            xAxis: {
+                data: dateList2
+            },
+            yAxis: {
+                type: 'value'
+            },
+            series: [{
+                name: '累计治愈',
+                data: healList,
+                type: 'line',
+                symbolSize: 8,
+                itemStyle: {
+                    normal: {
+                        lineStyle: {
+                            width: 5,
+                            color: '#65b379'
+                        }
+                    }
+                }
+            },{
+                name: '累计死亡',
+                data: deadList,
+                type: 'line',
+                symbolSize: 8,
+                itemStyle: {
+                    normal: {
+                        lineStyle: {
+                            width: 5,
+                            color: '#87878b'
+                        }
+                    }
+                }
+            }]
+        };
+
+        var healRateList = [[${healRateList}]];
+        var deadRateList = [[${deadRateList}]];
+        countryChartFourOption = {
+            legend: {
+                data: ['治愈率', '病死率'],
+                top: '8%',
+                left: '10%',
+                icon: 'rect',
+                itemHeight: 20,
+                itemWidth: 20,
+                textStyle:{
+                    fontSize: 20,
+                    color: '#737373'
+                }
+            },
+            color: ['#65b379', '#87878b'],
+            xAxis: {
+                data: dateList2
+            },
+            yAxis: {
+                type: 'value'
+            },
+            series: [{
+                name: '治愈率',
+                data: healRateList,
+                type: 'line',
+                symbolSize: 8,
+                itemStyle: {
+                    normal: {
+                        lineStyle: {
+                            width: 5,
+                            color: '#65b379'
+                        }
+                    }
+                }
+            },{
+                name: '病死率',
+                data: deadRateList,
+                type: 'line',
+                symbolSize: 8,
+                itemStyle: {
+                    normal: {
+                        lineStyle: {
+                            width: 5,
+                            color: '#87878b'
+                        }
+                    }
+                }
+            }]
+        };
+
+        countryChartOne.setOption(countryChartOneOption);
+        countryChartTwo.setOption(countryChartTwoOption);
+        countryChartThree.setOption(countryChartThreeOption);
+        countryChartFour.setOption(countryChartFourOption);
+
+    </script>
+
+    <script th:inline="javascript">
+
+        var contrastChartOne = echarts.init(document.getElementsByClassName('contrast-one')[0]);
+        var contrastChartTwo = echarts.init(document.getElementsByClassName('contrast-two')[0]);
+        var contrastChartThree = echarts.init(document.getElementsByClassName('contrast-three')[0]);
+        var contrastChartFour = echarts.init(document.getElementsByClassName('contrast-four')[0]);
+
+
+        var dateList3 = [[${dateListThree}]];
+        var countryConfirmList = [[${countryConfirmList}]];
+        var hubeiConfirmList = [[${hubeiConfirmList}]];
+        var wuhanConfirmList = [[${wuhanConfirmList}]];
+        contrastChartOneOption = {
+            legend: {
+                data: ['全国', '湖北', '武汉'],
+                top: '8%',
+                left: '10%',
+                icon: 'rect',
+                itemHeight: 20,
+                itemWidth: 20,
+                textStyle:{
+                    fontSize: 20,
+                    color: '#737373'
+                }
+            },
+            color: ['#F06061', '#6ABD7F', '#87878A'],
+            xAxis: {
+                data: dateList3
+            },
+            yAxis: {
+                type: 'value'
+            },
+            series: [{
+                name: '全国',
+                stack: '总量',
+                areaStyle: {},
+                data: countryConfirmList,
+                type: 'line',
+                symbolSize: 8,
+                itemStyle: {
+                    normal: {
+                        lineStyle: {
+                            width: 5,
+                            color: '#F06061'
+                        }
+                    }
+                }
+            },{
+                name: '湖北',
+                stack: '总量',
+                areaStyle: {},
+                data: hubeiConfirmList,
+                type: 'line',
+                symbolSize: 8,
+                itemStyle: {
+                    normal: {
+                        lineStyle: {
+                            width: 5,
+                            color: '#6ABD7F'
+                        }
+                    }
+                }
+            },{
+                name: '武汉',
+                stack: '总量',
+                areaStyle: {},
+                data: wuhanConfirmList,
+                type: 'line',
+                symbolSize: 8,
+                itemStyle: {
+                    normal: {
+                        lineStyle: {
+                            width: 5,
+                            color: '#87878A'
+                        }
+                    }
+                }
+            }]
+        };
+
+
+        var dateList4 = [[${dateListFour}]];
+        var countryAddList = [[${countryAddList}]];
+        var hubeiAddList = [[${hubeiAddList}]];
+        var notHubeiAddList = [[${notHubeiAddList}]];
+        contrastChartTwoOption = {
+            legend: {
+                data: ['全国', '湖北', '非湖北'],
+                top: '8%',
+                left: '10%',
+                icon: 'rect',
+                itemHeight: 20,
+                itemWidth: 20,
+                textStyle:{
+                    fontSize: 20,
+                    color: '#737373'
+                }
+            },
+            color: ['#F06061', '#6ABD7F', '#87878A'],
+            xAxis: {
+                data: dateList4
+            },
+            yAxis: {
+                type: 'value'
+            },
+            series: [{
+                name: '全国',
+                data: countryAddList,
+                type: 'line',
+                symbolSize: 8,
+                itemStyle: {
+                    normal: {
+                        lineStyle: {
+                            width: 5,
+                            color: '#F06061'
+                        }
+                    }
+                }
+            },{
+                name: '湖北',
+                data: hubeiAddList,
+                type: 'line',
+                symbolSize: 8,
+                itemStyle: {
+                    normal: {
+                        lineStyle: {
+                            width: 5,
+                            color: '#6ABD7F'
+                        }
+                    }
+                }
+            },{
+                name: '非湖北',
+                data: notHubeiAddList,
+                type: 'line',
+                symbolSize: 8,
+                itemStyle: {
+                    normal: {
+                        lineStyle: {
+                            width: 5,
+                            color: '#87878A'
+                        }
+                    }
+                }
+            }]
+        };
+
+        var dateList5 = [[${dateListFive}]];
+        var countryDeadRate = [[${countryDeadRate}]];
+        var hubeiDeadRate = [[${hubeiDeadRate}]];
+        var notHubeiDeadRate = [[${notHubeiDeadRate}]];
+        contrastChartThreeOption = {
+            legend: {
+                data: ['全国', '湖北', '非湖北'],
+                top: '8%',
+                left: '10%',
+                icon: 'rect',
+                itemHeight: 20,
+                itemWidth: 20,
+                textStyle:{
+                    fontSize: 20,
+                    color: '#737373'
+                }
+            },
+            color: ['#ACDB70', '#2B7C74', '#57BF92'],
+            xAxis: {
+                data: dateList5
+            },
+            yAxis: {
+                type: 'value'
+            },
+            series: [{
+                name: '全国',
+                data: countryDeadRate,
+                type: 'line',
+                symbolSize: 8,
+                itemStyle: {
+                    normal: {
+                        lineStyle: {
+                            width: 5,
+                            color: '#ACDB70'
+                        }
+                    }
+                }
+            },{
+                name: '湖北',
+                data: hubeiDeadRate,
+                type: 'line',
+                symbolSize: 8,
+                itemStyle: {
+                    normal: {
+                        lineStyle: {
+                            width: 5,
+                            color: '#2B7C74'
+                        }
+                    }
+                }
+            },{
+                name: '非湖北',
+                data: notHubeiDeadRate,
+                type: 'line',
+                symbolSize: 8,
+                itemStyle: {
+                    normal: {
+                        lineStyle: {
+                            width: 5,
+                            color: '#57BF92'
+                        }
+                    }
+                }
+            }]
+        };
+
+        var dateList6 = [[${dateListSix}]];
+        var countryHealRate = [[${countryHealRate}]];
+        var hubeiHealRate = [[${hubeiHealRate}]];
+        var notHubeiHealRate = [[${notHubeiHealRate}]]
+        contrastChartFourOption = {
+            legend: {
+                data: ['全国', '湖北', '非湖北'],
+                top: '8%',
+                left: '10%',
+                icon: 'rect',
+                itemHeight: 20,
+                itemWidth: 20,
+                textStyle:{
+                    fontSize: 20,
+                    color: '#737373'
+                }
+            },
+            color: ['#b07c4d', '#2e75b6', '#b0b0b3'],
+            xAxis: {
+                data: dateList6
+            },
+            yAxis: {
+                type: 'value'
+            },
+            series: [{
+                name: '全国',
+                data: countryHealRate,
+                type: 'line',
+                symbolSize: 8,
+                itemStyle: {
+                    normal: {
+                        lineStyle: {
+                            width: 5,
+                            color: '#b07c4d'
+                        }
+                    }
+                }
+            },{
+                name: '湖北',
+                data: hubeiHealRate,
+                type: 'line',
+                symbolSize: 8,
+                itemStyle: {
+                    normal: {
+                        lineStyle: {
+                            width: 5,
+                            color: '#2e75b6'
+                        }
+                    }
+                }
+            },{
+                name: '非湖北',
+                data: notHubeiHealRate,
+                type: 'line',
+                symbolSize: 8,
+                itemStyle: {
+                    normal: {
+                        lineStyle: {
+                            width: 5,
+                            color: '#b0b0b3'
+                        }
+                    }
+                }
+            }]
+        };
+
+
+        contrastChartOne.setOption(contrastChartOneOption);
+        contrastChartTwo.setOption(contrastChartTwoOption);
+        contrastChartThree.setOption(contrastChartThreeOption);
+        contrastChartFour.setOption(contrastChartFourOption);
+    </script>
+
+</body>
+</html>

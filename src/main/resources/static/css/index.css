@@ -1,0 +1,519 @@
+*{
+    padding: 0px;
+    margin: 0px;
+    font-family: Arial, Helvetica, sans-serif;
+}
+html body{
+    width: 100%;
+    height: 100%;
+}
+.wrapper{
+    width: 750px;
+    height: 1000px;
+    /* border: 1px solid black; */
+    position: absolute;
+    left: 50%;
+    margin-left: -375px;
+}
+/* 顶部部分 */
+.top .head .data-from{
+    position: absolute;
+    font-size: 25px;
+    color: white;
+    top: 255px;
+    left: 39px;
+}
+
+.top .head .data-from::before{
+    content: '';
+    display: block;
+    font-size: 0;
+    line-height: 0;
+    position: absolute;
+    right: -30px;
+    top: 50%;
+    transform: translate(0, -50%);
+    width: 24px;
+    height: 24px;
+    background: url("https://mat1.gtimg.com/news/images/inews/2020/feiyan/18/img/icon_qs2.png");
+    background-size: 100% 100%;
+}
+
+.top .china-today-total{    
+    padding: 25px 38px;
+    /* border: 1px solid black; */
+}
+.top .china-today-total .time{
+    color: #737373;
+    font-size: 24px;
+    padding-bottom: 20px;
+}
+.china-today-total .time span{
+    color: #222;
+}
+.china-today-total .data{
+    position: relative;
+}
+.china-today-total .data .icbar{
+    width: 222px;
+    height: 160px;
+    /* border: 1px solid black; */
+    position: absolute;
+}
+.data .icbar div{
+    width: 222px;
+    text-align: center;
+}
+.data .icbar .add{
+    color: #7c7c7c;
+    height: 46px;
+    padding-top: 22px;
+    font-size: 20px;
+    line-height: 24px;
+    font-weight: 500;
+}
+.data .icbar .number{
+    height: auto;
+    padding-top: 8px;
+    line-height: 46px;
+    font-size: 44px;
+}
+.data .icbar .text{
+    height: auto;
+    font-size: 24px;
+    font-weight: 500;
+    color: #222;
+    height: 54px;
+    line-height: 48px;
+}
+
+.data .confirm{
+    border-radius: 12px 0 0 0;
+    background-color: #fdf1f1;
+}
+.data .confirm .add span,
+.data .confirm .number{
+    color: #cc1e1e;
+}
+.data .confirm .number,
+.data .heal .number,
+.data .dead .number,
+.data .nowConfirm .number,
+.data .suspect .number,
+.data .nowSevere .number{
+    font-weight: 600;
+}
+
+.data .heal{
+    left: 228px;
+    background-color: #f1f8f4;
+}
+.data .heal .add span,
+.data .heal .number{
+    color: #178b50;
+}
+
+.data .dead{
+    left: 456px;
+    border-radius: 0 12px 0 0;
+    background-color: #f3f6f8;
+}
+.data .dead .add span,
+.data .dead .number{
+    color: #4e5a65;
+}
+
+.data .nowConfirm{
+    top: 166px;
+    border-radius: 0 0 0 12px;
+    background-color: #fdf1f1;
+}
+.data .nowConfirm .add span,
+.data .nowConfirm .number{
+    color: #f23a3b;
+}
+
+.data .suspect{
+    top: 166px;
+    left: 228px;
+    background-color: #fff5e9;
+}
+.data .suspect .add span,
+.data .suspect .number{
+    color: #ff8800;
+}
+
+.data .nowSevere{
+    top: 166px;
+    border-radius: 0 0 12px 0;
+    left: 456px;
+    background-color: #faf2f6;
+}
+.data .nowSevere .add span,
+.data .nowSevere .number{
+    color: #ca3f81;
+}
+
+/* 数据图部分 */
+.wrapper .echarts{
+    position: absolute;
+    top: 75%;
+}
+.wrapper .echarts .chart{
+    margin-top: 30px;
+    width: 750px;
+    height: 525px;
+    overflow: hidden;
+    /* border: 1px solid red; */
+}
+
+/* 地图选择按钮 */
+.map-chart-wrapper .chinamapbtn {
+    position: absolute;
+    left: 39px;
+    top: 0;
+    float: left;
+    z-index: 9;
+    height: 52px;
+}
+.map-chart-wrapper .chinamapbtn span{
+    display: block;
+    width: 128px;
+    height: 100%;
+    line-height: 52px;
+    text-align: center;
+    font-size: 24px;
+    border: 1px solid #EFEFEF;
+    float: left;
+    position: relative;
+    margin: 0 -2px;
+}
+.chinamapbtn span.current {
+    background-color: #EEF4FF;
+    border-color: #CCDEFF;
+    color: #005dff;
+    z-index: 2;
+}
+.chinamapbtn span:first-child{
+    border-radius: 12px 0 0 12px;
+}
+.chinamapbtn span:last-child{
+    border-radius: 0 12px 12px 0;
+}
+/* 地图 */
+.wrapper .echarts .map-chart-wrapper{
+    height: 700px;
+}
+.echarts .chart .map .map-chart{
+    position: absolute;
+    width: 750px;
+    height: 700px;
+    top: -73px !important;
+}
+
+/* 折线图 */
+.chart .country,
+.chart .contrast{
+    position: relative;
+    width: 3000px;
+    height: 404px;
+}
+.echarts .chart .title div{
+    width: 670px;
+    position: relative;
+    padding: 0px 0px 0px 24px;
+    height: 80px;
+    line-height: 80px;
+    color: #222222;
+    font-size: 28px;
+    font-weight: bold;
+    top: -105%;
+    border: none;
+}
+.echarts .chart .title .title-two{
+    left: 750px;
+    top: -125%;
+}
+.echarts .chart .title .title-three{
+    left: 1500px;
+    top: -145%;
+}
+.echarts .chart .title .title-four{
+    left: 2250px;
+    top: -164%;
+}
+.country-chart,
+.contrast-chart{
+    top: -76px !important;
+}
+.chart .country div,
+.chart .contrast div{
+    float: left;
+    width: 750px;
+    height: 404px;
+    border-radius: 12px;
+    box-sizing: border-box;
+    border: 1px solid #e1e1e1;
+}
+.echarts .chart .title{
+    border: none;
+}
+
+.echarts .chart{
+    position: relative
+}
+/* 左右按钮，上下图 */
+.echarts .left,
+.echarts .right{
+    position: absolute;
+    width: 72px;
+    height: 72px;
+    background-size: 100% 100% !important;
+    top: 49%;
+    margin-top: -72px;
+    z-index: 2;
+}
+/* 下一张图按钮 */
+.echarts .left{
+    display: none;
+    background: url(https://mat1.gtimg.com/news/signin/v6/zhexian_left.png);
+    left: -34px;
+}
+/* 上一张图按钮 */
+.echarts .right{
+    background: url(https://mat1.gtimg.com/news/signin/v6/zhelian_right.png);
+    right: -34px;
+}
+.echarts .contrast-left,
+.echarts .contrast-right{
+    top: 78.5%;
+}
+/* 图下选择下标 */
+.echarts .chart .button{
+    position: relative;
+    display: block;
+    width: 750px;
+    height: 100px;
+    top: 3%;
+}
+.echarts .chart .button span{
+    position: relative;
+    top: -394%;
+    margin-left: 7px;
+    width: 173px;
+    height: 84px;
+    display: inline-block;
+    background-color: #f3f6f8;
+    opacity: 1;
+    font-size: 24px;
+    text-align: center;
+    line-height: 32px;
+    vertical-align: middle;
+    border-radius: 8px;
+    outline: 0;
+    padding-top: 9px;
+    color: #222222;
+    font-weight: 400;
+    border: 1px solid #dfe2e4;
+}
+.echarts .chart .button span:hover{
+    cursor: pointer;
+}
+.echarts .chart .button .active{
+    background-color: #eef4ff;
+    color: #005def;
+    border: 1px solid #8fb8ff;
+}
+
+/* 国内数据部分 */
+.all-data {
+    position: absolute;
+    top: 255%;
+}
+.up-tips.uchi {
+    height: 90px;
+    margin-top: 70px;
+    margin-bottom: 30px;
+}
+.up-gnbl {
+    position: relative;
+    padding-left: 86px;
+}
+.up-gnbl::before {
+    content: '';
+    display: block;
+    font-size: 0;
+    line-height: 0;
+    position: absolute;
+    width: 32px;
+    height: 32px;
+    background: url('https://mat1.gtimg.com/news/zhishiguan/page/icon_gnbl.png');
+    background-size: 100% 100%;
+    left: 5px;
+    top: 49%;
+    transform: translate(0, -50%);
+}
+.up-tips.uchi::before {
+    top: 43%;
+}
+.up-tips {
+    box-sizing: border-box;
+    padding: 0 0 0 40px;
+    height: 80px;
+    line-height: 80px;
+    color: #222222;
+    font-size: 28px;
+    font-weight: bold;
+}
+.up-tips.uchi .tips {
+    position: absolute;
+    top: 50px;  
+    left: 5px;
+    color: #737373;
+    font-size: 24px;
+    font-weight: normal;
+    font-style: normal;
+}
+.placeItem{
+    height: 84px;
+    line-height: 84px;
+    color: #222;
+    text-align: center;
+    padding: 0 40px;
+    position: relative;
+}
+.placeItem .blue{
+    color: #005dff;
+}
+.placeItem.nav{
+    background-color: #fff;
+    font-size: 24px;
+}
+.placeItem>div,
+.placeItem>h2{
+    height: 55%;
+    float: left;
+    overflow: hidden;
+}
+.placeItem>h2{
+    width: 169px;
+    text-align: left;
+    font-weight: 400;
+    overflow: hidden;
+    padding-left: 22px;
+    font-size: 24px;
+    line-height: 42px;
+}
+.placeItem>div:nth-child(2),
+.placeItem>div:nth-child(3) {
+    width: 120px;
+    height: 60px;
+}
+.placeItem>div:nth-child(4),
+.placeItem>div:nth-child(5) {
+    width: 92px;
+    height: 60px;
+}
+.clearfix::after{
+    content: '';
+    display: block;
+    font-size: 0;
+    line-height: 0;
+    visibility: hidden;
+    clear: both;
+}
+.placeItemWrap {
+    border-bottom: 2px solid #e9e9e9;
+}
+.placeItemWrap .placeArea::before {
+    content: '';
+    display: block;
+    position: absolute;
+    font-size: 0;
+    width: 16px;
+    height: 12px;
+    background-size: 100% 100%;
+    left: 38px;
+    top: 50%;
+    transform: translate(0, -50%);
+}
+.placeItem {
+    background-color: #f8f8f8 !important;
+}
+.placeItem .detail{
+    width: 55px;
+    height: 84px;
+}
+.placeItem .detail a {
+    text-decoration: none;
+    color: #005DFF;
+    display: block;
+    font-size: 24px;
+}
+.placeArea>h2{
+    font-size: 30px;
+}
+.placeArea>h2:hover {
+    cursor: pointer;
+}
+.placeCity::before {
+    content: '';
+    display: block;
+    font-size: 0;
+    line-height: 0;
+    position: absolute;
+    left: 40px;
+    right: 40px;
+    height: 2px;
+    bottom: 0;
+    background-color: #e9e9e9;
+}
+.placeCity>h2 {
+    line-height: 25px;
+}
+.placeItem.placeArea .add,
+.placeItem.placeArea .confirm,
+.placeItem.placeArea .heal,
+.placeItem.placeArea .dead {
+    font-size: 26px;
+    font-weight: 400;
+}
+.placeItem .add.small{
+    color: #639bfc;
+}
+.small {
+    font-size: 100%;
+}
+
+.placeCity {
+    height: 68px;
+    line-height: 68px;
+    color: #737373;
+    background-color: rgba(248, 248, 248, 0.3);
+    display: none;
+}
+.current .placeCity{
+    display:block;
+}
+ .current .placeArea::before{
+    background-image: url('https://mat1.gtimg.com/news/images/inews/2020/feiyan/18/img/area_top.png');
+}
+.placeArea::before{
+    background-image: url('https://mat1.gtimg.com/news/images/inews/2020/feiyan/18/img/area_down.png');
+}
+.placeItem.placeCity{
+    font-size: 24px;
+}
+
+
+/* 国外数据部分 */
+.all-data .foreign {
+    margin-top: 50px;
+}
+
+
+.placeItem.abroad>div {
+    width: 162px;
+    font-size: 26px;
+    font-weight: 400;
+}
